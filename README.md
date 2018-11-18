@@ -24,8 +24,44 @@ Or install it yourself as:
     require 'tiny_obj'
     obj = TinyOBJ.load("path/to/file.obj") # finds materials in /path/to
     obj = TinyOBJ.load("path/to/file.obj", "path/to/materials/dir")
-    #=> obj is a hash containing :materials, :vertices, :shapes, and other
+
+    hash = obj.to_hash
+    #=> hash is a hash containing :materials, :vertices, :shapes, and other
     #   goodness.
+```
+
+Converting the OBJ into a hash is convenient but not performant. If you are
+dealing with a large object, you may wish to fill a buffer with data without
+having to convert it into Ruby hashes, arrays and numbers. You can do that
+with TinyOBJ#fill_buffers. Below is a complete example, which uses Fiddle to
+allocate the buffer.
+
+**Note** that using Fiddle is not required (but is convenient since it ships
+with Ruby). Only knowing the memory address of the buffer is necessary. Be
+aware that using the wrong address or not a real (or adequately-sized) buffer
+can lead to undefined behavior and program crashes.
+
+```ruby
+vertex_stride = Fiddle::SIZEOF_FLOAT * (
+                  3 + # 3 floats for each position (x, y, z)
+                  3 + # 3 floats for each normal (x, y, z)
+                  2   # 2 floats for each texture coord (u, v)
+                )
+
+index_stride  = 2 # each index will be one uint16, or two 8-bit bytes
+vertex_buffer = Fiddle::Pointer.malloc(@obj.num_distinct_vertices * vertex_stride)
+index_buffer  = Fiddle::Pointer.malloc(@obj.num_indices           * index_stride)
+
+@obj.fill_buffers(positions:     vertex_buffer,
+                  normals:       vertex_buffer + Fiddle::SIZEOF_FLOAT * 3,
+                  texcoords:     vertex_buffer + Fiddle::SIZEOF_FLOAT * 6,
+                  indices:       index_buffer,
+                  vertex_stride: vertex_stride,
+                  index_stride:  index_stride,
+                  index_type:    :uint16)
+
+# vertex_buffer now contains interleaved vertex data, and
+# index_buffer now contains index data.
 ```
 
 ## Development
