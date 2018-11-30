@@ -13,6 +13,10 @@ class TinyOBJTest < Minitest::Test
     refute_nil ::TinyOBJ::VERSION
   end
 
+  def test_obj_names
+    refute_nil @obj.to_hash[:materials][0][:name]
+  end
+
   def test_fill_buffers
     # In this example, we'll fill 2 buffers, one with vertex data and the
     # other with index data. In the vertex data we will gather positions,

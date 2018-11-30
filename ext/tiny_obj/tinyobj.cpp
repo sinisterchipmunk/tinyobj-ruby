@@ -12,7 +12,7 @@
 # define NUM2PTR(x)   ((void*)(NUM2ULL(x)))
 #endif
 
-#define NIL_OR_STR(cstr) (strlen(cstr) > 0 ? Qnil : rb_str_new2(cstr))
+#define NIL_OR_STR(cstr) (strlen(cstr) == 0 ? Qnil : rb_str_new2(cstr))
 
 extern VALUE rb_cOBJ;
 
