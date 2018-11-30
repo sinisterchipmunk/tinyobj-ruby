@@ -14,5 +14,6 @@ void Init_tiny_obj(void) {
   rb_define_method(rb_cOBJ, "normals",               rb_obj_normals,               -1);
   rb_define_method(rb_cOBJ, "texcoords",             rb_obj_texcoords,             -1);
   rb_define_method(rb_cOBJ, "colors",                rb_obj_colors,                -1);
+  rb_define_method(rb_cOBJ, "materials",             rb_obj_materials,              0);
   rb_define_singleton_method(rb_mTinyOBJ, "load", rb_tinyobj_load, -1);
 }

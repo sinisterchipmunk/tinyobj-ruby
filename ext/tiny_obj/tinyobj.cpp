@@ -416,21 +416,11 @@ extern "C" {
     return rb_colors;
   }
 
-  VALUE rb_obj_to_hash(VALUE self) {
+  VALUE rb_obj_materials(VALUE self) {
     obj_t *obj;
     TypedData_Get_Struct(self, obj_t, &obj_type, obj);
-    std::string                      &warnings  = *(obj->warnings);
-    std::vector<tinyobj::shape_t>    &shapes    = *(obj->shapes);
     std::vector<tinyobj::material_t> &materials = *(obj->materials);
-
-    VALUE ret = rb_hash_new();
-    rb_hash_aset(ret, ID2SYM(rb_intern("success")), obj->result ? Qtrue : Qfalse);
-
-    if (warnings.size() > 0)
-      rb_hash_aset(ret, ID2SYM(rb_intern("warnings")), rb_str_new2(warnings.c_str()));
-
     VALUE rb_materials = rb_ary_new2(materials.size());
-    rb_hash_aset(ret, ID2SYM(rb_intern("materials")), rb_materials);
     for (size_t m = 0; m < materials.size(); m++) {
       VALUE rb_material = rb_hash_new();
       rb_ary_push(rb_materials, rb_material);
@@ -498,7 +488,22 @@ extern "C" {
       if (!NIL_P(rb_unknown_parameter))
         rb_hash_aset(rb_material, ID2SYM(rb_intern("unknown_parameters")), rb_unknown_parameter);
     }
+    return rb_materials;
+  }
 
+  VALUE rb_obj_to_hash(VALUE self) {
+    obj_t *obj;
+    TypedData_Get_Struct(self, obj_t, &obj_type, obj);
+    std::string                      &warnings  = *(obj->warnings);
+    std::vector<tinyobj::shape_t>    &shapes    = *(obj->shapes);
+
+    VALUE ret = rb_hash_new();
+    rb_hash_aset(ret, ID2SYM(rb_intern("success")), obj->result ? Qtrue : Qfalse);
+
+    if (warnings.size() > 0)
+      rb_hash_aset(ret, ID2SYM(rb_intern("warnings")), rb_str_new2(warnings.c_str()));
+
+    rb_hash_aset(ret, ID2SYM(rb_intern("materials")), rb_funcall(self, rb_intern("materials"), 0));
     rb_hash_aset(ret, ID2SYM(rb_intern("vertices")),  rb_funcall(self, rb_intern("vertices"),  0));
     rb_hash_aset(ret, ID2SYM(rb_intern("normals")),   rb_funcall(self, rb_intern("normals"),   0));
     rb_hash_aset(ret, ID2SYM(rb_intern("texcoords")), rb_funcall(self, rb_intern("texcoords"), 0));

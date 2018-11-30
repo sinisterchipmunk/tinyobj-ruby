@@ -14,7 +14,7 @@ class TinyOBJTest < Minitest::Test
   end
 
   def test_obj_names
-    refute_nil @obj.to_hash[:materials][0][:name]
+    refute_nil @obj.materials[0][:name]
   end
 
   def test_fill_buffers

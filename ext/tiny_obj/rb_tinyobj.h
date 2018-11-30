@@ -16,6 +16,7 @@ extern "C" {
   VALUE rb_obj_normals(int argc, VALUE *argv, VALUE self);
   VALUE rb_obj_texcoords(int argc, VALUE *argv, VALUE self);
   VALUE rb_obj_colors(int argc, VALUE *argv, VALUE self);
+  VALUE rb_obj_materials(VALUE self);
 #ifdef __cplusplus
 }
 #endif
