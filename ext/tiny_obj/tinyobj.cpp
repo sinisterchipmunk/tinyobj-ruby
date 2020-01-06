@@ -42,8 +42,7 @@ static const rb_data_type_t obj_type = {
   .function = {
     .dmark = NULL,
     .dfree = obj_free,
-    .dsize = obj_size,
-    .reserved = { 0, 0 }
+    .dsize = obj_size
   },
   .parent = NULL,
   .data = NULL,
